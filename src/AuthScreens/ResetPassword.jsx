@@ -6,6 +6,7 @@ import { resetPassword } from '../Services/auth'
 import Snackbar from 'react-native-snackbar'
 import Loader from '../components/Loader'
 import { borderColor } from '../Constants/colors'
+import { useNetInfo } from '@react-native-community/netinfo'
 
 export default function ResetPassword({navigation}) {
 
@@ -14,31 +15,48 @@ export default function ResetPassword({navigation}) {
     const [confirmPassword,setConfirmPassword] = useState("")
     const [isLoading,setIsLoading] = useState(false)
 
+    const {type,isConnected} = useNetInfo()
+
+
+    useEffect(() =>{
+      if(isConnected === false){
+          Snackbar.show({
+              text:"No internet connection",
+              backgroundColor:"red",
+              
+          })
+      }
+    },[isConnected])
 
     const handleResetPassword = () => {
 
         if(!token){
             Snackbar.show({
-                text:"token must not be empty"
+                text:"token must not be empty",
+                backgroundColor:"red"
             })
             return
         }
 
         if(!password || !confirmPassword){
             Snackbar.show({
-                text:"password field is required"
+                text:"password field is required",
+                backgroundColor:"red"
+
             })
             return
         }
         if(password.length < 4 || password.length >20){
             Snackbar.show({
-                text:"password length must be 4-20 characters"
+                text:"password length must be 4-20 characters",
+                backgroundColor:"red"
             })
             return
         }
         if(password !== confirmPassword){
             Snackbar.show({
-                text:"confirm password did not match"
+                text:"confirm password did not match",
+                backgroundColor:"red"
             })
             return
         }
@@ -50,7 +68,8 @@ export default function ResetPassword({navigation}) {
             setIsLoading(false)
             if(res.data.success){
                 Snackbar.show({
-                    text:res.data.msg
+                    text:res.data.msg,
+                    backgroundColor:"red"
                 })
                 navigation.popToTop()
             }
@@ -60,7 +79,8 @@ export default function ResetPassword({navigation}) {
             console.log(err)
             setIsLoading(false)
             Snackbar.show({
-                text:"token did not match"
+                text:"token did not match",
+                backgroundColor:"red"
             })
         })
     }

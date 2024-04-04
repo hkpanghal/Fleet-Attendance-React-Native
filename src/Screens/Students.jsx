@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, Text, Touchable, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useRoute } from '@react-navigation/native'
 import { bgColor, borderColor } from '../Constants/colors'
 import InputField from '../components/InputField'
@@ -12,33 +12,55 @@ import { fetchStudents, switchIsPresent } from '../Slices/studentsSlice'
 import { generateAttendancePDF, generatePDF } from '../utils/AttendancePDF'
 import Snackbar from 'react-native-snackbar'
 import { addAttendanceToDb } from '../Services/database'
+import { useNetInfo } from '@react-native-community/netinfo'
 
 export default function Students() {
+
+    
     const {class_id,user_id,class_name} = useRoute().params 
     const [subject,SetSubject] = useState("")
 
     let students = useSelector((state) => state.student.students)
-    let students1  = [...students]
-     students1.sort((a,b) => a.roll_number>b.roll_number ? 1 :-1)
-    students = [...students1]
     const isLoading = useSelector((state) => state.student.isLoading)
     const dispatch = useDispatch()
     const [displayAddStudentCard,setDisplayAddStudentCard] = useState(false)
+    const {type,isConnected} = useNetInfo()
+  
+    const presentStudents = useMemo(() => {
+        return (students.filter((student)=>student.is_present === true)).length
+    },[students]) 
 
+    const totalStudents = useMemo(() => {
 
+      return students.length
+    },[students.length])
+
+    useEffect(() =>{
+      if(isConnected === false){
+          Snackbar.show({
+              text:"No internet connection",
+              backgroundColor:"red",
+              
+          })
+      }
+    },[isConnected])
 
     const handlePDFDownload = () => {
 
       if(!subject){
         Snackbar.show({
-          text:"subject field is empty"
+          text:"subject field is empty",
+          backgroundColor:"red"
         })
         return
       }
       
       const date = new Date().toLocaleDateString()
-      console.log(date)
-      generatePDF(students,class_name,subject,date)
+      
+      generatePDF(students,class_name,subject,date,presentStudents,totalStudents-presentStudents)
+      .then(res => {
+
+      })
     }
 
     
@@ -47,7 +69,8 @@ export default function Students() {
 
       if(!subject){
         Snackbar.show({
-          text:"subject field is empty"
+          text:"subject field is empty",
+          backgroundColor:"red"
         })
         return
       }
@@ -69,10 +92,15 @@ export default function Students() {
       })
     }
 
-    useEffect(() => {
-      const data = {class_id,user_id}
-      dispatch(fetchStudents(data))
 
+  
+
+    useEffect(() => {
+     
+      const data = {class_id,user_id}
+    
+      dispatch(fetchStudents(data))
+      
     },[])
     
 
@@ -90,17 +118,17 @@ export default function Students() {
           <View style={styles.tableRow}>
             <Text style={styles.headerCell}><Icons name={"smile-o"} category={"FontAwesome"} size={24}/></Text>
             <Text style={styles.headerCell}>Present</Text>
-            <Text style={styles.headerCell}>{(students.filter((student)=>student.is_present === true)).length}</Text>
+            <Text style={styles.headerCell}>{presentStudents}</Text>
           </View>
           <View style={styles.tableRow}>
             <Text style={styles.headerCell}><Icons name={"emoji-sad"} category={"Entypo"}  size={20} /></Text>
             <Text style={styles.headerCell}>Absent</Text>
-            <Text style={styles.headerCell}>{(students.filter((student)=>student.is_present === false)).length}</Text>
+            <Text style={styles.headerCell}>{totalStudents - presentStudents}</Text>
           </View>
           <View style={styles.tableRow}>
             <Text style={styles.headerCell}><Icons name={"hand-o-right"} category={"FontAwesome"} size={24} /></Text>
             <Text style={styles.headerCell}>Total</Text>
-            <Text style={styles.headerCell}>{students.length}</Text>
+            <Text style={styles.headerCell}>{totalStudents}</Text>
           </View>
     
       </View>

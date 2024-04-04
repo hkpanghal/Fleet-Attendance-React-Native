@@ -1,5 +1,5 @@
-import { FlatList, Image, SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { Animated, Easing, FlatList, Image, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { bgColor, borderColor } from '../Constants/colors';
 import defaultUserImage from "../assets/images/userDefaultImage.png"
@@ -12,10 +12,20 @@ import { useSelector } from 'react-redux';
 export default function Home({navigation}) {
  
   const userDetails = useSelector((state) => state.user.details)
-  
+  const translation = useRef(new Animated.Value(0)).current
+  useEffect(() => {
+     Animated.timing(translation,{
+      toValue:1,
+      duration:100,
+      delay:200,
+      easing:Easing.ease,
+      useNativeDriver:false
+     }).start()
+  },[])
+
   return (
-    <SafeAreaView style={styles.main}>
-      <View style={styles.userInfo}>
+    <SafeAreaView style={[styles.main]}>
+      <Animated.View style={[styles.userInfo,{opacity:translation}]}>
         <View style={styles.userInfoRight}>
           <Text numberOfLines={1} style={{fontSize:30,fontWeight:"700"}}>Welcome !!</Text>
           <Text numberOfLines={1} style={{fontSize:20,fontWeight:"700"}}>{userDetails.first_name +" " + userDetails.last_name}</Text>
@@ -24,7 +34,7 @@ export default function Home({navigation}) {
         <View >
           <Image source={defaultUserImage} style={styles.userImage}/>
         </View>
-      </View>
+      </Animated.View>
       <FlatList  numColumns={2}  keyExtractor={(elem)=> elem.id} data={flatListDatata} renderItem={(elem) => <HomeComps elem={elem.item} navigation={navigation}/>} />
 
     </SafeAreaView>

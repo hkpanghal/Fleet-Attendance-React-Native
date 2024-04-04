@@ -1,15 +1,28 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import { Animated, Easing, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useRef } from 'react'
 import Icons from '../utils/Icons'
 import { bgColor } from '../Constants/colors'
 
 export default function HomeComps({elem,navigation}) {
-  
+  const translation = useRef(new Animated.Value(0)).current
+  useEffect(() => {
+     Animated.timing(translation,{
+      toValue:1,
+      duration:500,
+      delay:200,
+      easing:Easing.ease,
+      useNativeDriver:false
+     }).start()
+  },[])
+
   return (
-    <TouchableOpacity style={styles.comp} onPress={() => navigation.navigate(elem.nav)}>
+    <Animated.View style={[styles.comp,{opacity:translation,transform:[{scale:translation}]}]}>
+    <TouchableOpacity style={{justifyContent:"center",alignItems:"center",gap:10,flex:1,width:"100%",borderRadius:20}} onPress={() => navigation.navigate(elem.nav)}>
         <Icons name={elem.icon.name} category={elem.icon.category} size={elem.icon.size}/>
         <Text style={{fontSize:20}}>{elem.name}</Text>
     </TouchableOpacity>
+
+    </Animated.View>
   )
 }
 
@@ -24,7 +37,8 @@ const styles = StyleSheet.create({
         width:"45%",
         justifyContent:"center",
         alignItems:"center",
-        gap:10
+        gap:10,
+     
     },
     comp_special:{
         backgroundColor:bgColor,

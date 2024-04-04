@@ -26,7 +26,8 @@ export default function AddStudentCard({display,setDisplay}) {
     const handleAddStudent = () => {
         if(!studentFirstName || !studentRollNumber){
             Snackbar.show({
-                text:"*(required) fields must not be empty"
+                text:"*(required) fields must not be empty",
+                backgroundColor:"red"
             })
             return
         }
@@ -43,7 +44,8 @@ export default function AddStudentCard({display,setDisplay}) {
                 setStudentRollNumber("")
                 setstudentLastName("")
                 Snackbar.show({
-                    text:"student created successfully"
+                    text:"student created successfully",
+                    backgroundColor:"green"
                 })
             }
 
@@ -51,7 +53,8 @@ export default function AddStudentCard({display,setDisplay}) {
         .catch(err => {
             setIsLoading(false)
             Snackbar.show({
-                text:"some error occurred while creating the student"
+                text:"some error occurred while creating the student",
+                backgroundColor:"red"
             })
             console.log(err)
         })

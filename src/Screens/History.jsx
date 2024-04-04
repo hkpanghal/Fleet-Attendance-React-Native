@@ -7,6 +7,8 @@ import Loader from '../components/Loader'
 import { fetchAttendances } from '../Slices/attendanceSlice'
 import { bgColor, borderColor } from '../Constants/colors'
 import { fetchClasses } from '../Slices/classesSlice'
+import { useNetInfo } from '@react-native-community/netinfo'
+import Snackbar from 'react-native-snackbar'
 
 
 export default function History({navigation}) {
@@ -15,9 +17,21 @@ export default function History({navigation}) {
   const userDetails = useSelector((state) => state.user.details)
   const isLoading = useSelector((state) => state.clas.isLoading)
   const dispatch = useDispatch()
+  const {type,isConnected} = useNetInfo()
 
+
+  useEffect(() =>{
+    if(isConnected === false){
+        Snackbar.show({
+            text:"No internet connection",
+            backgroundColor:"red",
+            
+        })
+    }
+  },[isConnected])
 
   useEffect(() => {
+      if(classes.length <=0 )
       dispatch(fetchClasses(userDetails._id))
   },[])
 

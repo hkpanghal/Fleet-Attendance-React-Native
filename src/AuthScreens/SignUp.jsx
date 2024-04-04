@@ -8,6 +8,7 @@ import { signup } from '../Services/auth'
 import { authContext } from '../Contexts/AuthContext'
 import Loader from '../components/Loader'
 import { borderColor } from '../Constants/colors'
+import { useNetInfo } from '@react-native-community/netinfo'
 
 export default function SignUp({navigation}) {
   const [firstName,setFirstName] = useState("")
@@ -19,10 +20,25 @@ export default function SignUp({navigation}) {
   
   const [isLoading,setIsLoading] = useState(false) 
 
+
+  const {type,isConnected} = useNetInfo()
+
+
+  useEffect(() =>{
+    if(isConnected === false){
+        Snackbar.show({
+            text:"No internet connection",
+            backgroundColor:"red",
+            
+        })
+    }
+  },[isConnected])
+
   const handleSignUp = () => {
     if(!firstName || !email || !password || !confirmPassword){
       Snackbar.show({
-        text:"*(required)   field must not be empty"
+        text:"*(required)   field must not be empty",
+        backgroundColor:"red"
       })
       
       return 
@@ -31,21 +47,19 @@ export default function SignUp({navigation}) {
     
     if(password !== confirmPassword){
       Snackbar.show({
-        text:"confirm password did not match"
+        text:"confirm password did not match",
+        backgroundColor:"red"
       })
       return
     }
     else if(password.length < 4 || password.length > 20){
       Snackbar.show({
-        text:"password length must be between 4-20 characters"
+        text:"password length must be between 4-20 characters",
+        backgroundColor:"red"
       })
       return
     }
     
-    
-    // console.log(firstName,lastName,email,password,confirmPassword)
-
-
     setIsLoading(true)
 
     signup(firstName.trim(),lastName.trim(),email.trim(),password.trim(),confirmPassword.trim()).then((res) => {
@@ -57,7 +71,8 @@ export default function SignUp({navigation}) {
       console.log(error)
       setIsLoading(false)
       Snackbar.show({
-        text:"some error occurred while creating the user please try again"
+        text:"some error occurred while creating the user please try again",
+        backgroundColor:"red"
       })
     })
 

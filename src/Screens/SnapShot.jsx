@@ -5,13 +5,26 @@ import Loader from '../components/Loader'
 import { fetchAttendances } from '../Slices/attendanceSlice'
 import { useRoute } from '@react-navigation/native'
 import SnapComp from '../components/SnapComp'
+import { useNetInfo } from '@react-native-community/netinfo'
 
 export default function SnapShot() {
     const {class_id,user_id,class_name} = useRoute().params 
     const dispatch = useDispatch()
     const historyData = useSelector((state) => state.attendance.data)
     const isLoading = useSelector((state) => state.attendance.isLoading)
+   
+    const {type,isConnected} = useNetInfo()
 
+
+    useEffect(() =>{
+      if(isConnected === false){
+          Snackbar.show({
+              text:"No internet connection",
+              backgroundColor:"red",
+              
+          })
+      }
+    },[isConnected])
 
     useEffect(() => {
         dispatch(fetchAttendances({class_id,user_id}))

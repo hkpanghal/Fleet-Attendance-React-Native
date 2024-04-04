@@ -5,9 +5,10 @@ import Icons from '../utils/Icons'
 import ClassComp from '../components/ClassComp'
 import AddClassCard from '../components/AddClassCard'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchClasses } from '../Slices/classesSlice'
+import { addClass, fetchClasses } from '../Slices/classesSlice'
 import Loader from '../components/Loader'
-
+import { useNetInfo } from '@react-native-community/netinfo'
+import Snackbar from 'react-native-snackbar'
 
 export default function Classes({navigation}) {
     
@@ -16,10 +17,26 @@ export default function Classes({navigation}) {
     const userDetails = useSelector((state) => state.user.details)
     const isLoading = useSelector((state) => state.clas.isLoading)
     const dispatch = useDispatch()
+    
+    const { type, isConnected } = useNetInfo();
 
 
     useEffect(() => {
-        dispatch(fetchClasses(userDetails._id))
+       if(isConnected === false){
+        Snackbar.show({
+            text:"No internet connection",
+            backgroundColor:"red",
+            
+        })
+       }
+    },[isConnected])
+
+    useEffect(() => {
+       
+        if(classes.length <= 0 ){
+            dispatch(fetchClasses(userDetails._id))
+        }
+    
     },[])
 
     if(isLoading){

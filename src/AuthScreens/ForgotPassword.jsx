@@ -6,12 +6,26 @@ import Snackbar from 'react-native-snackbar'
 import { borderColor } from '../Constants/colors'
 import { forgotPassword } from '../Services/auth'
 import Loader from '../components/Loader'
+import { useNetInfo } from '@react-native-community/netinfo'
 
 
 export default function ForgotPassword({navigation}) {
 
     const [email,setEmail] = useState("")
     const [isLoading,setIsLoading] = useState(false)
+
+    const {type,isConnected} = useNetInfo()
+
+
+    useEffect(() =>{
+      if(isConnected === false){
+          Snackbar.show({
+              text:"No internet connection",
+              backgroundColor:"red",
+              
+          })
+      }
+    },[isConnected])
 
     const handleForgotPassword = () => {
  
@@ -29,7 +43,8 @@ export default function ForgotPassword({navigation}) {
             setIsLoading(false)
             if(res.data.success){
                 Snackbar.show({
-                    text:res.data.msg
+                    text:res.data.msg,
+                    backgroundColor:"green"
                 })
                navigation.navigate("Reset Password")
             }
@@ -38,7 +53,8 @@ export default function ForgotPassword({navigation}) {
             setIsLoading(false)
             console.log(err)
             Snackbar.show({
-                text:"some error occurred"
+                text:"some error occurred",
+                backgroundColor:"red"
             })
         })
     

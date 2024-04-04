@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { borderColor } from '../Constants/colors';
 import { useDispatch } from 'react-redux';
 import { fetchDetails } from '../Slices/userDetails';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 
 
@@ -22,13 +23,28 @@ export default function SignIn({navigation}) {
   const [isLoading,setIsLoading] = useState(false)
   const dispatch = useDispatch()
 
+  const {type,isConnected} = useNetInfo()
+
+
+  useEffect(() =>{
+    if(isConnected === false){
+        Snackbar.show({
+            text:"No internet connection",
+            backgroundColor:"red",
+            
+        })
+    }
+  },[isConnected])
+
   const storeData = async (key, value) => {
     try {
       await AsyncStorage.setItem(key, JSON.stringify(value));
       dispatch(fetchDetails())
-      console.log('Data stored successfully!');
     } catch (error) {
-      console.log('Error storing data: ' + error);
+      Snackbar.show({
+        text:"Some error occurred",
+        backgroundColor:"red"
+      })
     }
   };
 
@@ -37,21 +53,24 @@ export default function SignIn({navigation}) {
 
     if(!email){
       Snackbar.show({
-        text:"Email is required"
+        text:"Email is required",
+        backgroundColor:"red"
       })
 
       return 
     }
     if(!password){
       Snackbar.show({
-        text:"password is required"
+        text:"password is required",
+        backgroundColor:"red"
       })
       return
     }
 
     if(password.length < 4 || password.length > 20){
       Snackbar.show({
-        text:"password length must be between 4-8 characters"
+        text:"password length must be between 4-8 characters",
+        backgroundColor:"red"
       })
 
       return 
@@ -70,7 +89,8 @@ export default function SignIn({navigation}) {
     }).catch((err) => {
         setIsLoading(false)
         Snackbar.show({
-            text:"Invalid email or password"
+            text:"Invalid email or password",
+            backgroundColor:"red"
         })
         console.log(err)
     })

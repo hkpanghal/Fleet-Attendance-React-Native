@@ -9,6 +9,8 @@ export default function HistoryComp({elem,navigation,index}) {
     const [isEditable ,setIsEditable] = useState(false)
 
 
+    console.log(elem)
+
     const handleNavigation = () => {
       navigation.navigate("Snapshots",{class_id:elem._id,user_id:elem.created_by,class_name:elem.class_name})
     }

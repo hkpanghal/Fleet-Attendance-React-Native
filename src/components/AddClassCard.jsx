@@ -22,7 +22,8 @@ export default function AddClassCard({display,setDisplay}) {
     
     if(!className){
       Snackbar.show({
-        text:"classname required"
+        text:"classname required",
+        backgroundColor:"red"
       })
 
       return 
@@ -35,7 +36,8 @@ export default function AddClassCard({display,setDisplay}) {
         dispatch(addClass({data:res.data.clas}))
         setIsLoading(false)
         Snackbar.show({
-          text:"class created successfully"
+          text:"class created successfully",
+          backgroundColor:"green"
         })
         
         setClassName("")
@@ -45,7 +47,8 @@ export default function AddClassCard({display,setDisplay}) {
       console.log(error),
       setIsLoading(false)
       Snackbar.show({
-        text:"some error occurred"
+        text:"some error occurred",
+        backgroundColor:"red"
       })
     })
    

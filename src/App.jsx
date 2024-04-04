@@ -1,11 +1,13 @@
 import { StatusBar, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AuthContext from './Contexts/AuthContext'
 import Router from './Router/Router'
 import { Provider } from 'react-redux'
 import { store } from './Store/store'
 
 const App = () => {
+
+
 
   return (
     <>

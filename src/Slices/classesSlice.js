@@ -15,11 +15,13 @@ export const fetchClasses = createAsyncThunk("fetchClasses" , async (user_id) =>
     await gtAllClasses(user_id).then((res)=>{
    
         if(res.data.success){
+           
             data = res.data.classes
         }
     }).catch((err) => {
         console.log(err)
     })
+
 
     return data
 })

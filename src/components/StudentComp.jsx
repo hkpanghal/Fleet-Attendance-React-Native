@@ -1,5 +1,5 @@
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, Vibration, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import {Animated, Alert, StyleSheet, Text, TextInput, TouchableOpacity, Vibration, View, Easing } from 'react-native'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Icons from '../utils/Icons'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import { bgColor, borderColor } from '../Constants/colors'
@@ -36,7 +36,8 @@ export default function StudentComp({elem,index}) {
                         dispatch(deleteStudent({student_id:res.data.student._id}))
                         setIsLoading(false)
                         Snackbar.show({
-                            text:"Student Deleted SuccessFully"
+                            text:"Student Deleted SuccessFully",
+                            backgroundColor:"green"
                         })
                     }
                 })
@@ -44,12 +45,14 @@ export default function StudentComp({elem,index}) {
                     console.log(err)
                     setIsLoading(false)
                     Snackbar.show({
-                        text:"Some error occurred while deleting the student"
+                        text:"Some error occurred while deleting the student",
+                        backgroundColor:"red"
                     })
                 })
             }}
         ],{cancelable:true})
     }
+
 
     const handleMarkIsPresent = (value) =>{
         // console.log(elem)
@@ -63,6 +66,7 @@ export default function StudentComp({elem,index}) {
             const first_name = data[0]
             const last_name = ( data.length > 1 ? data.slice(1) : data[1])?.join(" ") ?? " "
             const details = {
+                index,
                 student_id:elem._id,
                 first_name,
                 last_name,
@@ -77,7 +81,8 @@ export default function StudentComp({elem,index}) {
                     setIsLoading(false)
                     setIsEditable(false)
                     Snackbar.show({
-                        text:"Details updated Successfully"
+                        text:"Details updated Successfully",
+                        backgroundColor:"green"
                     })    
                 }
             })
@@ -85,7 +90,8 @@ export default function StudentComp({elem,index}) {
             console.log(err)
             setIsLoading(false)
             Snackbar.show({
-                text:"Some error occurred while updating details please try again !!"
+                text:"Some error occurred while updating details please try again !!",
+                backgroundColor:"red"
             })
            })
 
@@ -93,7 +99,8 @@ export default function StudentComp({elem,index}) {
         }
 
         Snackbar.show({
-            text:"Student name and roll number must not be empty"
+            text:"Student name and roll number must not be empty",
+            backgroundColor:"red"
         })
 
     
@@ -107,18 +114,13 @@ export default function StudentComp({elem,index}) {
     ],{cancelable:false})
   }
 
-//   useEffect(()=>{
-    
-//     console.log(elem._id,isPresent)
-
-//   },[setIsPresent])
 
 
   if(isLoading){
     return <Loader/>
   }
   return (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
       
       <View style={styles.btnEditRemove}>
         <TouchableOpacity onPress={!isEditable? handleSetEditable : handleUpdateStudent}><Icons name={!isEditable?"pencil":"folder"} category={"Ionicons"} size={24}/></TouchableOpacity>
@@ -143,7 +145,7 @@ export default function StudentComp({elem,index}) {
             <BouncyCheckbox  isChecked={!elem.is_present} fillColor="red"  onPress={() => handleMarkIsPresent(false)} disableBuiltInState />
         </View>
       </View>
-
+     
     </View>
   )
 }

@@ -28,7 +28,8 @@ export default function ClassComp({elem,navigation}) {
       if(res.data.success){
 
         Snackbar.show({
-          text:"Classname Updated Successfully"
+          text:"Classname Updated Successfully",
+          backgroundColor:"green"
         })
 
         dispatch(renameClass({class_id:elem._id,class_name:className}))
@@ -39,7 +40,8 @@ export default function ClassComp({elem,navigation}) {
     .catch(err => {
       console.log(err)
       Snackbar.show({
-        text:"Some Error Occurred Please Try again!!"
+        text:"Some Error Occurred Please Try Again!!",
+        backgroundColor:"red"
       })
       setIsLoading(false)
     })
